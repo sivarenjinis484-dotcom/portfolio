@@ -5,422 +5,528 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sivarenjini S — Computer Science Student</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0f1319;
-    --panel: #151b23;
-    --panel-alt: #10151c;
-    --border: #232b36;
-    --gutter: #5b6675;
-    --text: #dfe6ee;
-    --text-dim: #8b96a5;
-    --keyword: #c9a4ff;   /* purple - keywords */
-    --string: #ffb454;    /* amber - string literals / prose */
-    --func: #5eead4;      /* teal - function names / accent */
-    --comment: #6b7684;   /* muted - comments */
-    --tab-active: #1b232d;
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --ink: #1d2129;
+    --ink-soft: #5b6472;
+    --ink-faint: #9aa2ad;
+    --accent: #1f3a5f;      /* deep navy — primary */
+    --accent-2: #a9824f;    /* muted brass — secondary highlight */
+    --border: #e6e3db;
+    --border-soft: #efece4;
   }
 
   *{ box-sizing: border-box; }
-
   html{ scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
 
   body{
     margin: 0;
     background: var(--bg);
-    color: var(--text);
+    color: var(--ink);
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
-  code, .mono{ font-family: 'JetBrains Mono', monospace; }
+  a{ color: inherit; }
+  ::selection{ background: rgba(31,58,95,0.14); }
 
-  a{ color: var(--func); }
-
-  ::selection{ background: rgba(94,234,212,0.25); }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .wrap{
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 32px;
   }
 
-  /* ---------- Editor chrome ---------- */
-  .editor{
-    max-width: 980px;
-    margin: 32px auto;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 40px 80px -30px rgba(0,0,0,0.6);
-    background: var(--panel);
+  .eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 500;
   }
 
-  .titlebar{
+  /* ---------- Nav ---------- */
+  header.nav{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(247,246,242,0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner{
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 18px 32px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: var(--panel-alt);
-    border-bottom: 1px solid var(--border);
+    justify-content: space-between;
   }
-  .dot{ width: 11px; height: 11px; border-radius: 50%; display:inline-block; }
-  .dot.red{ background:#ff5f56; }
-  .dot.yellow{ background:#ffbd2e; }
-  .dot.green{ background:#27c93f; }
-  .titlebar .path{
-    margin-left: 12px;
-    font-size: 12.5px;
-    color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
+  .nav-mark{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: 0.01em;
   }
-
-  /* Tab bar */
-  .tabbar{
+  .nav-links{
     display: flex;
-    overflow-x: auto;
-    background: var(--panel-alt);
-    border-bottom: 1px solid var(--border);
-    scrollbar-width: none;
+    gap: 28px;
+    list-style: none;
+    margin: 0; padding: 0;
   }
-  .tabbar::-webkit-scrollbar{ display: none; }
+  .nav-links a{
+    text-decoration: none;
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    transition: color 0.15s ease;
+    padding: 4px 2px;
+  }
+  .nav-links a:hover{ color: var(--accent); }
+  .nav-links a:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
 
-  .tab{
-    flex: 0 0 auto;
-    padding: 11px 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-dim);
-    background: transparent;
-    border: none;
-    border-right: 1px solid var(--border);
-    cursor: pointer;
-    white-space: nowrap;
+  .nav-toggle{ display: none; }
+
+  /* ---------- Hero ---------- */
+  .hero{
     position: relative;
-    transition: color 0.15s ease, background 0.15s ease;
-  }
-  .tab:hover{ color: var(--text); }
-  .tab:focus-visible{ outline: 2px solid var(--func); outline-offset: -2px; }
-  .tab.active{
-    color: var(--text);
-    background: var(--tab-active);
-  }
-  .tab.active::after{
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: -1px;
-    height: 2px;
-    background: var(--func);
-  }
-  .tab .ext{ color: var(--comment); }
-
-  /* Code panel */
-  .panel{
-    display: none;
-    background: var(--tab-active);
-  }
-  .panel.active{ display: block; }
-
-  .code{
-    display: flex;
-    padding: 28px 0;
-  }
-  .gutter{
-    flex: 0 0 auto;
-    padding: 0 16px;
-    text-align: right;
-    color: var(--gutter);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    user-select: none;
-    line-height: 1.9;
-    border-right: 1px solid var(--border);
-    min-width: 44px;
-  }
-  .content{
-    padding: 0 28px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14.5px;
-    line-height: 1.9;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .kw{ color: var(--keyword); }
-  .str{ color: var(--string); }
-  .cm{ color: var(--comment); font-style: italic; }
-  .fn{ color: var(--func); }
-
-  .prose{
-    font-family: 'Inter', sans-serif;
-    color: var(--text);
-    font-size: 15.5px;
-    line-height: 1.75;
-    margin: 4px 0 4px 0;
-  }
-
-  .indent{ padding-left: 24px; }
-  .indent2{ padding-left: 48px; }
-
-  /* Hero specifics */
-  .hero-name{
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    margin: 2px 0 6px 0;
-  }
-  .hero-tag{
-    color: var(--func);
-    font-size: 15px;
-    margin-bottom: 18px;
-  }
-
-  /* Skill chips */
-  .chips{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 14px 0 6px 0;
-  }
-  .chip{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    padding: 7px 14px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--panel);
-    color: var(--text);
-    transition: border-color 0.15s ease, transform 0.15s ease;
-  }
-  .chip:hover{ border-color: var(--func); transform: translateY(-1px); }
-  .chip .pct{ color: var(--comment); }
-
-  .barwrap{
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    height: 8px;
+    padding: 96px 0 84px 0;
     overflow: hidden;
-    margin: 6px 0 18px 0;
   }
-  .bar{
-    height: 100%;
-    background: linear-gradient(90deg, var(--func), var(--keyword));
-    border-radius: 6px;
+  .hero-mark{
+    position: absolute;
+    right: -40px;
+    top: -60px;
+    font-family: 'Fraunces', serif;
+    font-size: 340px;
+    font-weight: 600;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--border);
+    line-height: 1;
+    z-index: 0;
+    user-select: none;
+    pointer-events: none;
+  }
+  .hero-content{ position: relative; z-index: 1; max-width: 620px; }
+
+  .hero h1{
+    font-family: 'Fraunces', serif;
+    font-size: clamp(38px, 5.6vw, 58px);
+    font-weight: 600;
+    line-height: 1.08;
+    margin: 14px 0 10px 0;
+    letter-spacing: -0.01em;
+  }
+  .hero .role{
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 22px;
+  }
+  .hero p.lede{
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    max-width: 540px;
+    margin-bottom: 30px;
   }
 
-  /* Contact button */
+  .btnrow{ display: flex; flex-wrap: wrap; gap: 12px; }
   .btn{
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    padding: 12px 20px;
-    background: var(--func);
-    color: #0b1117;
-    border-radius: 6px;
-    text-decoration: none;
+    font-size: 14.5px;
     font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: filter 0.15s ease, transform 0.15s ease;
+    padding: 13px 24px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   }
-  .btn:hover{ filter: brightness(1.08); transform: translateY(-1px); }
-  .btn:focus-visible{ outline: 2px solid #fff; outline-offset: 2px; }
-  .btn.ghost{
+  .btn.primary{
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid var(--accent);
+  }
+  .btn.primary:hover{ background: #16304e; transform: translateY(-1px); }
+  .btn.secondary{
     background: transparent;
-    color: var(--text);
+    color: var(--ink);
     border: 1px solid var(--border);
   }
-  .btn.ghost:hover{ border-color: var(--func); color: var(--func); }
+  .btn.secondary:hover{ border-color: var(--accent); color: var(--accent); }
+  .btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .btnrow{ display:flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+  /* ---------- Section scaffolding ---------- */
+  section{ padding: 72px 0; border-top: 1px solid var(--border-soft); }
+  section:first-of-type{ border-top: none; }
 
-  /* Status bar */
-  .statusbar{
+  .section-head{ margin-bottom: 36px; }
+  .section-head h2{
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 600;
+    margin: 6px 0 0 0;
+  }
+
+  /* ---------- About ---------- */
+  .about-body{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 680px;
+  }
+  .about-body p{ font-size: 16px; color: var(--ink-soft); }
+  .status-tag{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--accent);
+    background: #eef2f7;
+    border: 1px solid #dde5ee;
+    padding: 7px 14px;
+    border-radius: 30px;
+    width: fit-content;
+    margin-top: 6px;
+  }
+  .status-tag .dot{
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #2f9e63;
+    box-shadow: 0 0 0 3px rgba(47,158,99,0.18);
+  }
+
+  /* ---------- Education ---------- */
+  .edu-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 30px;
     display: flex;
     justify-content: space-between;
-    padding: 8px 16px;
-    background: var(--func);
-    color: #0b1117;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .edu-card h3{
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+  }
+  .edu-card .field{ color: var(--ink-soft); font-size: 14.5px; }
+  .edu-status{
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    border: 1px solid #e6d9c4;
+    background: #faf3e8;
+    padding: 6px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Skills ---------- */
+  .skills-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  .skill-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 26px;
+  }
+  .skill-card .skill-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .skill-card h3{
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .skill-card .level{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+  .meter{
+    height: 6px;
+    background: var(--border-soft);
+    border-radius: 30px;
+    overflow: hidden;
+  }
+  .meter-fill{
+    height: 100%;
+    background: var(--accent);
+    border-radius: 30px;
+  }
+  .skill-card p{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 14px 0 0 0;
+  }
+
+  /* ---------- Focus / goals ---------- */
+  .focus-list{
+    display: grid;
+    gap: 14px;
+  }
+  .focus-item{
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .focus-item .num{
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    color: var(--accent-2);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .focus-item h4{
+    margin: 0 0 4px 0;
+    font-size: 15.5px;
     font-weight: 600;
   }
-
-  .footer-note{
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 12.5px;
-    font-family: 'JetBrains Mono', monospace;
-    margin: 18px 0 40px 0;
+  .focus-item p{
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-soft);
   }
 
-  /* Mobile */
-  @media (max-width: 640px){
-    .editor{ margin: 0; border-radius: 0; border: none; }
-    .gutter{ display: none; }
-    .content{ padding: 0 18px; font-size: 13.5px; }
-    .code{ padding: 20px 0; }
-    .hero-name{ font-size: 22px; }
-    .tab{ padding: 10px 14px; font-size: 12px; }
+  /* ---------- Contact ---------- */
+  .contact-box{
+    background: var(--accent);
+    color: #fff;
+    border-radius: 10px;
+    padding: 52px 48px;
+    text-align: center;
+  }
+  .contact-box .eyebrow{ color: #b9c8dc; }
+  .contact-box h2{
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 600;
+    margin: 10px 0 14px 0;
+  }
+  .contact-box p{
+    color: #cfdaea;
+    max-width: 480px;
+    margin: 0 auto 28px auto;
+    font-size: 15.5px;
+  }
+  .contact-box .btn.primary{
+    background: #fff;
+    color: var(--accent);
+    border-color: #fff;
+  }
+  .contact-box .btn.primary:hover{ background: #eef2f7; }
+  .contact-box .btnrow{ justify-content: center; }
+
+  footer{
+    text-align: center;
+    padding: 28px 0 48px 0;
+    color: var(--ink-faint);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 720px){
+    .wrap, .nav-inner{ padding-left: 20px; padding-right: 20px; }
+    .nav-links{ gap: 16px; }
+    .hero{ padding: 64px 0 56px 0; }
+    .hero-mark{ font-size: 220px; top: -30px; right: -30px; }
+    section{ padding: 52px 0; }
+    .skills-grid{ grid-template-columns: 1fr; }
+    .edu-card{ flex-direction: column; }
+    .contact-box{ padding: 40px 24px; }
+  }
+
+  @media (max-width: 560px){
+    .nav-links{ display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="editor">
-  <div class="titlebar">
-    <span class="dot red"></span>
-    <span class="dot yellow"></span>
-    <span class="dot green"></span>
-    <span class="path">sivarenjini-s — portfolio</span>
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-mark">Sivarenjini S</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#focus">Focus</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
   </div>
+</header>
 
-  <div class="tabbar" role="tablist" aria-label="Portfolio sections">
-    <button class="tab active" role="tab" aria-selected="true" data-target="about">about<span class="ext">.py</span></button>
-    <button class="tab" role="tab" aria-selected="false" data-target="education">education<span class="ext">.md</span></button>
-    <button class="tab" role="tab" aria-selected="false" data-target="skills">skills<span class="ext">.java</span></button>
-    <button class="tab" role="tab" aria-selected="false" data-target="goals">goals<span class="ext">.txt</span></button>
-    <button class="tab" role="tab" aria-selected="false" data-target="contact">contact<span class="ext">.sh</span></button>
-  </div>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-mark" aria-hidden="true">S</div>
+    <div class="wrap">
+      <div class="hero-content">
+        <div class="eyebrow">Portfolio</div>
+        <h1>Sivarenjini S</h1>
+        <div class="role">Computer Science Student</div>
+        <p class="lede">
+          B.Tech undergraduate building a foundation in software development —
+          currently focused on Python and Java, with an eye toward writing clean,
+          thoughtful code and growing into a capable engineer.
+        </p>
+        <div class="btnrow">
+          <a class="btn primary" href="#contact">Get in touch</a>
+          <a class="btn secondary" href="#about">More about me</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ABOUT -->
-  <div class="panel active" id="about">
-    <div class="code">
-      <div class="gutter">
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div>
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">01 — About</div>
+        <h2>A little about me</h2>
       </div>
-      <div class="content">
-        <div><span class="kw">class</span> <span class="fn">Sivarenjini_S</span>:</div>
-        <div class="indent hero-name">Sivarenjini S</div>
-        <div class="indent hero-tag"># Computer Science Student</div>
-        <div class="indent"><span class="kw">def</span> <span class="fn">__init__</span>(self):</div>
-        <div class="indent2 cm">"""</div>
-        <div class="indent2 prose">
-          I'm a Computer Science undergraduate currently pursuing my B.Tech.
-          I enjoy learning new languages and building small projects to strengthen
-          my fundamentals — right now that means spending most of my time with
+      <div class="about-body">
+        <p>
+          I'm a Computer Science undergraduate currently pursuing my B.Tech. I enjoy
+          learning new languages and building small projects to strengthen my
+          fundamentals — right now that means spending most of my time with
           Python and Java.
-        </div>
-        <div class="indent2 prose">
+        </p>
+        <p>
           I'm still early in my journey, curious about how things work under the
           hood, and looking for opportunities to learn, contribute, and grow as
           a developer.
-        </div>
-        <div class="indent2 cm">"""</div>
-        <div class="indent">self.status = <span class="str">"currently learning, always building"</span></div>
+        </p>
+        <span class="status-tag"><span class="dot"></span>Currently learning &amp; building</span>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- EDUCATION -->
-  <div class="panel" id="education">
-    <div class="code">
-      <div class="gutter">
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+  <section id="education">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">02 — Education</div>
+        <h2>Academic background</h2>
       </div>
-      <div class="content">
-        <div class="cm"># Education</div>
-        <div>&nbsp;</div>
-        <div><span class="kw">##</span> B.Tech in Computer Science Engineering</div>
-        <div class="prose indent">Currently pursuing</div>
-        <div>&nbsp;</div>
-        <div class="chips">
-          <span class="chip">Status: <span class="pct">In Progress</span></span>
-          <span class="chip">Focus: <span class="pct">Computer Science</span></span>
+      <div class="edu-card">
+        <div>
+          <h3>B.Tech in Computer Science Engineering</h3>
+          <div class="field">Undergraduate Degree</div>
         </div>
+        <div class="edu-status">In Progress</div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- SKILLS -->
-  <div class="panel" id="skills">
-    <div class="code">
-      <div class="gutter">
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div>
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">03 — Skills</div>
+        <h2>What I work with</h2>
       </div>
-      <div class="content">
-        <div><span class="kw">import</span> <span class="fn">Python</span>;</div>
-        <div><span class="kw">import</span> <span class="fn">Java</span>;</div>
-        <div>&nbsp;</div>
-        <div class="cm">// Languages I work with</div>
-        <div>&nbsp;</div>
-        <div>
-          <div class="prose">Python</div>
-          <div class="barwrap"><div class="bar" style="width: 78%;"></div></div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-top">
+            <h3>Python</h3>
+            <span class="level">Core language</span>
+          </div>
+          <div class="meter"><div class="meter-fill" style="width: 75%;"></div></div>
+          <p>Comfortable with core syntax and fundamentals; building toward more applied projects.</p>
         </div>
-        <div>
-          <div class="prose">Java</div>
-          <div class="barwrap"><div class="bar" style="width: 68%;"></div></div>
+        <div class="skill-card">
+          <div class="skill-top">
+            <h3>Java</h3>
+            <span class="level">Core language</span>
+          </div>
+          <div class="meter"><div class="meter-fill" style="width: 65%;"></div></div>
+          <p>Studying object-oriented programming concepts and strengthening problem-solving skills.</p>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- GOALS -->
-  <div class="panel" id="goals">
-    <div class="code">
-      <div class="gutter">
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div>
+  <!-- FOCUS / GOALS -->
+  <section id="focus">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">04 — Currently</div>
+        <h2>What I'm focused on</h2>
       </div>
-      <div class="content">
-        <div class="cm"># What I'm focused on right now</div>
-        <div>&nbsp;</div>
-        <div class="prose">No public projects yet — I'm still building my foundations in Python and Java before taking on bigger builds.</div>
-        <div class="prose">Next up: sharpening my problem-solving skills, getting comfortable with core computer science concepts, and eventually shipping my first few projects.</div>
-        <div>&nbsp;</div>
-        <div class="chips">
-          <span class="chip">📌 building fundamentals</span>
-          <span class="chip">🎯 first project — coming soon</span>
+      <div class="focus-list">
+        <div class="focus-item">
+          <div class="num">01</div>
+          <div>
+            <h4>Strengthening the fundamentals</h4>
+            <p>Deepening my understanding of Python and Java before taking on larger, applied projects.</p>
+          </div>
+        </div>
+        <div class="focus-item">
+          <div class="num">02</div>
+          <div>
+            <h4>Building problem-solving skills</h4>
+            <p>Working through core computer science concepts to build a solid technical foundation.</p>
+          </div>
+        </div>
+        <div class="focus-item">
+          <div class="num">03</div>
+          <div>
+            <h4>First project — coming soon</h4>
+            <p>No public projects yet, but I'm actively preparing to build and ship my first one.</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- CONTACT -->
-  <div class="panel" id="contact">
-    <div class="code">
-      <div class="gutter">
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div>
-      </div>
-      <div class="content">
-        <div class="cm">$ let's connect</div>
-        <div>&nbsp;</div>
-        <div class="prose">I'd love to hear from you — whether it's about an opportunity, a project, or just to talk code.</div>
-        <div>&nbsp;</div>
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-box">
+        <div class="eyebrow">05 — Contact</div>
+        <h2>Let's connect</h2>
+        <p>
+          I'd love to hear from you — whether it's about an opportunity, a project,
+          or just to talk about computer science.
+        </p>
         <div class="btnrow">
-          <a class="btn" href="mailto:sivarenjinis26@gmail.com">✉ Email me</a>
-          <a class="btn ghost" href="mailto:sivarenjinis26@gmail.com">sivarenjinis26@gmail.com</a>
+          <a class="btn primary" href="mailto:sivarenjinis26@gmail.com">Email me</a>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+</main>
 
-  <div class="statusbar">
-    <span>main*</span>
-    <span>UTF-8 · Python · Java</span>
-  </div>
-</div>
-
-<div class="footer-note">// built with curiosity, one line at a time</div>
-
-<script>
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.panel');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-      panels.forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected','true');
-      document.getElementById(tab.dataset.target).classList.add('active');
-    });
-  });
-</script>
+<footer>sivarenjinis26@gmail.com</footer>
 
 </body>
 </html>
